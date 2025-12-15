@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployments/service-deployment.yaml
+  - deployments/bff-deployment.yaml
+  - deployments/spa-deployment.yaml
+  - services/service-service.yaml
+  - services/bff-service.yaml
+  - services/spa-service.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: bff-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt=certificates/bff.iocl.local.crt.pem
+      - tls.key=certificates/bff.iocl.local.key.pem
+  - name: spa-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt=certificates/iocl.local.crt.pem
+      - tls.key=certificates/iocl.local.key.pem

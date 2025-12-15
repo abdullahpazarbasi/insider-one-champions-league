@@ -1,0 +1,29 @@
+name: SPA Tests
+
+on:
+  push:
+    paths:
+      - "front/spa/**"
+      - ".github/workflows/spa.yml"
+  pull_request:
+    paths:
+      - "front/spa/**"
+      - ".github/workflows/spa.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front/spa
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25"
+      - name: Install dependencies
+        run: npm install
+      - name: Run unit tests
+        run: npm run test

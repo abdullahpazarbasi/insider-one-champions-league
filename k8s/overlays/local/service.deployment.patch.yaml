@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service
+spec:
+  template:
+    spec:
+      containers:
+        - name: service
+          image: registry.local:5000/ioclservice:latest
+          imagePullPolicy: Always

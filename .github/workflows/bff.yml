@@ -1,0 +1,27 @@
+name: BFF Tests
+
+on:
+  push:
+    paths:
+      - "back/bff/**"
+      - ".github/workflows/bff.yml"
+  pull_request:
+    paths:
+      - "back/bff/**"
+      - ".github/workflows/bff.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: back/bff
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+      - name: Run unit tests
+        run: go test ./...

@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bff
+spec:
+  template:
+    spec:
+      containers:
+        - name: bff
+          image: registry.local:5000/ioclbff:latest
+          imagePullPolicy: Always

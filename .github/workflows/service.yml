@@ -1,0 +1,27 @@
+name: Service Tests
+
+on:
+  push:
+    paths:
+      - "back/service/**"
+      - ".github/workflows/service.yml"
+  pull_request:
+    paths:
+      - "back/service/**"
+      - ".github/workflows/service.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: back/service
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+      - name: Run unit tests
+        run: go test ./...

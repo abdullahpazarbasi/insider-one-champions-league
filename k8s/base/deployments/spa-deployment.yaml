@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spa
+  labels:
+    app: spa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spa
+  template:
+    metadata:
+      labels:
+        app: spa
+    spec:
+      containers:
+        - name: spa
+          image: ghcr.io/abdullahpazarbasi/ioclspa:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPA_PORT
+              value: "8080"
+            - name: VITE_BFF_BASE_URL
+              value: "https://bff.iocl.local/api"

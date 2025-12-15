@@ -1,0 +1,12 @@
+dist
+build
+coverage
+node_modules
+*.min.*
+pnpm-lock.yaml
+package-lock.json
+*.go
+go.mod
+go.sum
+Makefile
+.prettierrc

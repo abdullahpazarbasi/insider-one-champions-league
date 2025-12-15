@@ -1,0 +1,5 @@
+#/AGENTS.md
+/.env.local
+.cache/
+/k8s/base/certificates/*.pem
+*.out

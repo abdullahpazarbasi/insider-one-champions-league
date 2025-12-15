@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@vue/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "allowImportingTsExtensions": false
+  },
+  "include": ["vite.config.ts", "vitest.config.ts"],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.vitest.json" }]
+}

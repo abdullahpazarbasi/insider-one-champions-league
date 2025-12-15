@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spa
+spec:
+  template:
+    spec:
+      containers:
+        - name: spa
+          image: registry.local:5000/ioclspa:latest
+          imagePullPolicy: Always

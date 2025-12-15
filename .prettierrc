@@ -1,0 +1,28 @@
+{
+  "printWidth": 100,
+  "useTabs": false,
+  "tabWidth": 4,
+  "overrides": [
+    {
+      "files": ["*.json", "*.jsonc", "*.yml", "*.yaml"],
+      "options": {
+        "tabWidth": 2,
+        "useTabs": false
+      }
+    },
+    {
+      "files": ["*.html", "*.css", "*.scss", "*.svg"],
+      "options": {
+        "tabWidth": 2,
+        "useTabs": false
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx", "*.vue"],
+      "options": {
+        "tabWidth": 4,
+        "useTabs": false
+      }
+    }
+  ]
+}

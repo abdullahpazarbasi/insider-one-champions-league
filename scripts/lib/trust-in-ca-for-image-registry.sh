@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [ -z "${ROOT_DIR:-}" ]; then
+    echo "🛑  ROOT_DIR is undefined" >&2
+    exit 1
+fi
+
+if [ -z "${PROFILE_NAME:-}" ]; then
+    echo "🛑  PROFILE_NAME is undefined" >&2
+    exit 1
+fi
+
+if [ -z "${REGISTRY_HOST:-}" ]; then
+    echo "🛑  REGISTRY_HOST is undefined" >&2
+    exit 1
+fi
+
+set +e
+# shellcheck disable=SC2097,SC2098
+ROOT_DIR="${ROOT_DIR}" bash "${ROOT_DIR}/scripts/lib/ensure-mkcert-exists.sh"
+exit_code=$?
+set -e
+if [ $exit_code -ne 0 ]; then
+    echo "🛑  mkcert is not available (exit code: ${exit_code})" >&2
+    exit 1
+fi
+
+registry_port="5000"
+
+timeout=300 # in seconds
+interval=7 # in seconds
+elapsed=0 # in seconds
+
+registry_authority="${REGISTRY_HOST}:${registry_port}"
+root_ca_dir=$( mkcert -CAROOT )
+root_ca_cert_path="${root_ca_dir}/rootCA.pem"
+remote_ca_dir="/etc/docker/certs.d/${registry_authority}"
+remote_ca_cert_path="${remote_ca_dir}/ca.crt"
+
+minikube -p "${PROFILE_NAME}" ssh -- "sudo mkdir -p ${remote_ca_dir}"
+minikube -p "${PROFILE_NAME}" cp "${root_ca_cert_path}" "${PROFILE_NAME}:${remote_ca_cert_path}"
+
+if minikube -p "${PROFILE_NAME}" ssh -- "pgrep dockerd" > /dev/null; then
+    if minikube -p "${PROFILE_NAME}" ssh -- "sudo systemctl restart docker" > /dev/null; then
+        while [ "${elapsed}" -lt "${timeout}" ]; do
+            if minikube -p "${PROFILE_NAME}" ssh -- "sudo systemctl is-active --quiet docker && docker info" > /dev/null 2>&1; then
+                echo "✅  Docker of minikube is ready"
+                break
+            fi
+            sleep "${interval}"
+            elapsed=$((elapsed + interval))
+            echo "⏳  Docker of minikube is not ready yet (${elapsed} second(s) elapsed)..."
+        done
+        elapsed=0
+        while [ "${elapsed}" -lt "${timeout}" ]; do
+            if minikube -p "${PROFILE_NAME}" kubectl -- get nodes > /dev/null 2>&1; then
+                echo "✅  Kubernetes of minikube is ready"
+                break
+            fi
+            sleep "${interval}"
+            elapsed=$((elapsed + interval))
+            echo "⏳  Kubernetes of minikube is not ready yet (${elapsed} second(s) elapsed)..."
+        done
+    else
+        echo "🛑  Docker of minikube could not be restarted" >&2
+        exit 1
+    fi
+else
+    echo "❌  Minikube driver is not 'docker'" >&2
+    exit 1
+fi
